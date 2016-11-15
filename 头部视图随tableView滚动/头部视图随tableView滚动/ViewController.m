@@ -17,6 +17,7 @@
 @property (nonatomic,assign) CGFloat yOffset;
 @property (nonatomic,strong) UITableView *tableView1;
 @property (nonatomic,strong) UITableView *tableView2;
+@property (nonatomic,assign) NSInteger tableIndex;
 @end
 
 @implementation ViewController
@@ -90,41 +91,36 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
-
-    if ([scrollView isEqual:self.scrollView]) {
-        
-        return;
-        
-    }
+    
+  //    NSLog(@"---x:%f",scrollView.contentOffset.x);
+    
+        if ([scrollView isEqual:self.scrollView]) {
+            
+            self.tableIndex = scrollView.contentOffset.x / scrW;
+            
+            return;
+            
+        }
     
     CGFloat offsetY = scrollView.contentOffset.y;
     
-    NSLog(@"---%f",offsetY);
+  //  NSLog(@"---%f",offsetY);
     
     if (scrollView.contentOffset.y > 200) {
+      
         self.headView.frame = CGRectMake(0, -200, scrW, 200);
-    //    self.headView.center = CGPointMake(self.headView.center.x, 0 - 200);
+   
         return;
     }
-   // CGFloat h = 0 - offsetY;
     
      self.headView.frame = CGRectMake(0, -offsetY, scrW, 200);
- //   self.headView.center = CGPointMake(self.headView.center.x, h);
-}
 
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
-
-    if (scrollView.contentOffset.y > 200) {
-        
-     //   [self.tableView1 setContentOffset:CGPointMake(0, scrollView.contentOffset.y)];
-    //    [self.tableView2 setContentOffset:CGPointMake(0, scrollView.contentOffset.y)];
-
-        
-    }
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
 
+  
+    
     if([scrollView isEqual:self.scrollView]){
     
         return ;
@@ -133,16 +129,30 @@
     
      CGFloat tableViewOffset = scrollView.contentOffset.y;
     
+    NSLog(@"y:%f",tableViewOffset);
+    
     if (scrollView.contentOffset.y > 200) {
         
          tableViewOffset = 200;
         
     }
     
-  //  [self.tableView1 setContentOffset:CGPointMake(0, tableViewOffset)];
-    [self.tableView2 setContentOffset:CGPointMake(0, tableViewOffset)];
-
+    if (scrollView.contentOffset.y < 0) {
+        
+        return;
+        
+    }
     
+    if (self.tableIndex == 0) {
+        
+         [self.tableView2 setContentOffset:CGPointMake(0, tableViewOffset)];
+        
+    }else{
+    
+        [self.tableView1 setContentOffset:CGPointMake(0, tableViewOffset)];
+
+    }
+
 }
 
 - (void)didReceiveMemoryWarning {
